@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Package Comparison Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        select {
+            margin: 0 10px 20px 0;
+            padding: 6px;
+            font-size: 14px;
+        }
+        .left-col {
+            background-color: #e8f4ff;
+        }
+        .right-col {
+            background-color: #fff8e6;
+        }
+    </style>
+</head>
+<body>
+    <h2>Job Package Comparison</h2>
+    <div>
+        <label for="leftSelect">Left side:</label>
+        <select id="leftSelect"></select>
+
+        <label for="rightSelect">Right side:</label>
+        <select id="rightSelect"></select>
+    </div>
+
+    <table id="comparisonTable">
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th id="leftHeader" class="left-col"></th>
+                <th id="rightHeader" class="right-col"></th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- rows will be inserted here -->
+        </tbody>
+    </table>
+
+<script>
+const data = {
+  "Ala Carte- Single Plus ": {
+    "1) Number of Job Ad": "1 Job ad",
+    "2) Duration of job posting": "45 days",
+    "3) Booster": "Yes",
+    "4) Candidate Search": "No",
+    "5) AI recommended profile": "Yes - 10 Profiles",
+    "6) Freebies": "-",
+    "7) Price": "RM 1,080 nett",
+    "8) Average per job": "RM 1,080 nett",
+    "9) Validity of Package": "1 Month",
+    "10) Company Page": "Yes - Standard"
+  },
+  "Basic Yearly Standard": {
+    "1) Number of Job Ad": "Buy 3 free 3 (6 Job Ads)",
+    "2) Duration of job posting": "45 days",
+    "3) Booster": "Yes",
+    "4) Candidate Search": "Yes - 60 Profiles",
+    "5) AI recommended profile": "Yes - 60 Profiles",
+    "6) Freebies": "Free additional 6 internship OR Manager Job Ads",
+    "7) Price": "RM 2,916 nett",
+    "8) Average per job": "RM 486 nett",
+    "9) Validity of Package": "12 Months",
+    "10) Company Page": "Yes - Standard"
+  },
+  "SME Job Slot": {
+    "1) Number of Job Ad": "1 Job Slot (flexible change)",
+    "2) Duration of job posting": "365 days",
+    "3) Booster": "No",
+    "4) Candidate Search": "400 Profiles",
+    "5) AI recommended profile": "No",
+    "6) Freebies": "Free additional 6 internship OR Manager Job Ads",
+    "7) Price": "RM 3,888 nett",
+    "8) Average per job": "RM 324 nett (1 job ad at the same time)",
+    "9) Validity of Package": "12 Months",
+    "10) Company Page": "Yes - Standard"
+  },
+  "Professional Yearly Standard": {
+    "1) Number of Job Ad": "Buy 6 free 6 (12 Job Ads)",
+    "2) Duration of job posting": "45 days",
+    "3) Booster": "Yes",
+    "4) Candidate Search": "Yes - 120 Profiles",
+    "5) AI recommended profile": "Yes - 120 Profiles",
+    "6) Freebies": "Free additional 12 internship OR Manager Job Ads",
+    "7) Price": "RM 4,968 nett",
+    "8) Average per job": "RM 414 nett",
+    "9) Validity of Package": "12 Months",
+    "10) Company Page": "Yes - Standard"
+  },
+  "Previous Package": {
+    "1) Number of Job Ad": "24 Job Ads",
+    "2) Duration of job posting": "45 days",
+    "3) Booster": "Yes",
+    "4) Candidate Search": "240 Profiles",
+    "5) AI recommended profile": "240",
+    "6) Freebies": "Can Add On",
+    "7) Price": "RM 9,072 nett (After RM 500 discount)",
+    "8) Average per job": "RM 378 nett",
+    "9) Validity of Package": "12 Months",
+    "10) Company Page": "Yes"
+  }
+};
+
+// Build dropdowns
+const leftSelect = document.getElementById('leftSelect');
+const rightSelect = document.getElementById('rightSelect');
+const tableBody = document.getElementById('tableBody');
+const leftHeader = document.getElementById('leftHeader');
+const rightHeader = document.getElementById('rightHeader');
+
+Object.keys(data).forEach(key => {
+    const optLeft = document.createElement('option');
+    optLeft.value = key;
+    optLeft.textContent = key;
+    leftSelect.appendChild(optLeft);
+
+    const optRight = document.createElement('option');
+    optRight.value = key;
+    optRight.textContent = key;
+    rightSelect.appendChild(optRight);
+});
+
+// Ensure defaults are different if possible
+if (leftSelect.options.length > 0) leftSelect.selectedIndex = 0;
+if (rightSelect.options.length > 1) rightSelect.selectedIndex = 1;
+
+function buildRows() {
+    const leftChoice = leftSelect.value;
+    const rightChoice = rightSelect.value;
+    const attrs = new Set([
+        ...Object.keys(data[leftChoice]),
+        ...Object.keys(data[rightChoice])
+    ]);
+
+    tableBody.innerHTML = '';
+    attrs.forEach(attr => {
+        const row = document.createElement('tr');
+
+        const featureTd = document.createElement('td');
+        featureTd.textContent = attr.replace(/^[0-9]+\)\s*/, '');
+        row.appendChild(featureTd);
+
+        const leftTd = document.createElement('td');
+        leftTd.textContent = data[leftChoice][attr] || '-';
+        leftTd.className = 'left-col';
+        row.appendChild(leftTd);
+
+        const rightTd = document.createElement('td');
+        rightTd.textContent = data[rightChoice][attr] || '-';
+        rightTd.className = 'right-col';
+        row.appendChild(rightTd);
+
+        tableBody.appendChild(row);
+    });
+
+    leftHeader.textContent = leftChoice;
+    rightHeader.textContent = rightChoice;
+}
+
+// Event listeners
+leftSelect.addEventListener('change', buildRows);
+rightSelect.addEventListener('change', buildRows);
+
+// Initial table build
+buildRows();
+</script>
+</body>
+</html>
